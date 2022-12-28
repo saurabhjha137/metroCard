@@ -7,7 +7,7 @@ class metroCardMembers :
     def printDetails (self):
         print ('------------------------------')
         print (' ID : ' + self.memberID)
-        print (' Type : ' + self.memberType)
         print (' Balance : ' + self.memberBalance)
+        print (' Type : ' + self.memberType)
         print ('------------------------------')
 
