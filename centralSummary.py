@@ -7,5 +7,8 @@ class centralSummary :
     def addToCollection(self, passengerFare) :
         self.collectionAmount += passengerFare
 
-    def centralSummary (self) :
-        print('')
+    def addToDiscount(self, discountAmount) :
+        self.discount += discountAmount
+        
+    def centralSummaryPrint (self) :
+        print('TOTAL_COLLECTION CENTRAL '+ str(self.collectionAmount) + ' ' + str(self.discount))

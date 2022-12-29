@@ -6,6 +6,9 @@ class airportSummary :
 
     def addToCollection(self, passengerFare) :
         self.collectionAmount += passengerFare
-        
-    def airportSummary (self) :
-        print('')
+    
+    def addToDiscount(self, discountAmount) :
+        self.discount += discountAmount
+
+    def airportSummaryPrint (self) :
+        print('TOTAL_COLLECTION AIRPORT '+ str(self.collectionAmount) + ' ' + str(self.discount))

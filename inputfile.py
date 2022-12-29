@@ -11,13 +11,11 @@ def checkInActions (passengerList, inputString) :
         travellingDestination = 'AIRPORT'
         for passenger in passengerList :
             if passengerID == passenger.getPassengerID() :
-                print(' find ')
                 passenger.deductTravelCharges(travellingDestination, passengerType, centralCollectionSummary)
     else : 
         travellingDestination = 'CENTRAL'
         for passenger in passengerList :
             if passengerID == passenger.getPassengerID() :
-                print(' find ')
                 passenger.deductTravelCharges(travellingDestination, passengerType, airportCollectionSummary)
 
 
@@ -43,7 +41,8 @@ if __name__ == '__main__':
             checkInActions(passengerList, inputString)
 
         elif action == "PRINT_SUMMARY":
-           print('  ')
+            centralCollectionSummary.centralSummaryPrint()
+            airportCollectionSummary.airportSummaryPrint()
 
     for passenger in passengerList :
         passenger.printDetails()
