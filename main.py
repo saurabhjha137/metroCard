@@ -12,12 +12,13 @@ def checkInActions (passengerList, inputString) :
         for passenger in passengerList :
             if passengerID == passenger.getPassengerID() :
                 passenger.deductTravelCharges(travellingDestination, passengerType, centralCollectionSummary)
+                break
     else : 
         travellingDestination = 'CENTRAL'
         for passenger in passengerList :
             if passengerID == passenger.getPassengerID() :
                 passenger.deductTravelCharges(travellingDestination, passengerType, airportCollectionSummary)
-
+                break
 
 if __name__ == '__main__':
     
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     airportCollectionSummary =  airportSummary ()
     centralCollectionSummary =  centralSummary ()
 
-    file = open('myfile.txt', 'r+')
+    file = open('sampleIOfile2.txt', 'r+')
     # file = open(sys.argv[1], 'r+')
     
     for inputString in file.readlines():
@@ -44,7 +45,7 @@ if __name__ == '__main__':
             centralCollectionSummary.centralSummaryPrint()
             airportCollectionSummary.airportSummaryPrint()
 
-    for passenger in passengerList :
-        passenger.printDetails()
+    #for passenger in passengerList :
+    #    passenger.printDetails()
 
     file.close()

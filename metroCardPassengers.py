@@ -55,6 +55,7 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(ADULT_FARE)
                         self.updateIsReturnJourney(True)
+                        collectionSummary.updateAdultCount()
                     ##if passenger not having required balance
                     ##calculating service charges
                     else :
@@ -63,6 +64,7 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(ADULT_FARE+serviceFeeCharge)
                         self.updateIsReturnJourney(True)
+                        collectionSummary.updateAdultCount()
 
                 elif passengerType == 'SENIOR_CITIZEN' :
 
@@ -71,12 +73,16 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(SENIOR_CITIZEN_FARE)
                         self.updateIsReturnJourney(True)
+                        collectionSummary.updateSeniorCitizenCount()
+
                     else :
                         serviceFeeCharge = calcServiceCharge(balance, SENIOR_CITIZEN_FARE)
                         updatedBalance = 0
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(SENIOR_CITIZEN_FARE+serviceFeeCharge)
                         self.updateIsReturnJourney(True)
+                        collectionSummary.updateSeniorCitizenCount()
+
                 elif passengerType == 'KID' :
 
                     if  balance >= KID_FARE :
@@ -84,12 +90,15 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(KID_FARE)
                         self.updateIsReturnJourney(True)
+                        collectionSummary.updateKidCount()
+
                     else :
                         serviceFeeCharge = calcServiceCharge(balance, KID_FARE)
                         updatedBalance = 0
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(KID_FARE+serviceFeeCharge)
                         self.updateIsReturnJourney(True)
+                        collectionSummary.updateKidCount()
 
             #if passenger doing Return Journey        
             else :
@@ -102,6 +111,8 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(int(ADULT_FARE/2))
                         collectionSummary.addToDiscount(int(ADULT_FARE/2))
+                        collectionSummary.updateAdultCount()
+                        self.updateIsReturnJourney(False)
                     ##if passenger not having required balance
                     ##calculating service charges
                     else :
@@ -110,6 +121,8 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(int(ADULT_FARE/2) + serviceFeeCharge)
                         collectionSummary.addToDiscount(int(ADULT_FARE/2))
+                        collectionSummary.updateAdultCount()
+                        self.updateIsReturnJourney(False)
 
                 elif passengerType == 'SENIOR_CITIZEN' :
 
@@ -118,12 +131,17 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(int(SENIOR_CITIZEN_FARE/2))
                         collectionSummary.addToDiscount(int(SENIOR_CITIZEN_FARE/2))
+                        collectionSummary.updateSeniorCitizenCount()
+                        self.updateIsReturnJourney(False)
+
                     else :
                         serviceFeeCharge = calcServiceCharge(balance, int(SENIOR_CITIZEN_FARE/2))
                         updatedBalance = 0
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(int(SENIOR_CITIZEN_FARE/2) + serviceFeeCharge)
                         collectionSummary.addToDiscount(int(SENIOR_CITIZEN_FARE/2))
+                        collectionSummary.updateSeniorCitizenCount()
+                        self.updateIsReturnJourney(False)
 
                 elif passengerType == 'KID' :
 
@@ -132,12 +150,17 @@ class metroCardPassengers :
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(int(KID_FARE/2))
                         collectionSummary.addToDiscount(int(KID_FARE/2))
+                        collectionSummary.updateKidCount()
+                        self.updateIsReturnJourney(False)
+
                     else :
                         serviceFeeCharge = calcServiceCharge(balance, int(KID_FARE/2))
                         updatedBalance = 0
                         self.updatePassengerBalance(updatedBalance)
                         collectionSummary.addToCollection(int(KID_FARE/2) + serviceFeeCharge)
                         collectionSummary.addToDiscount(int(KID_FARE/2))
+                        collectionSummary.updateKidCount()
+                        self.updateIsReturnJourney(False)
 
             self.updateTravelDestination(travellingDestination)
 
