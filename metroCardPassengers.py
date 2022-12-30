@@ -3,18 +3,22 @@ ADULT_FARE = 200
 SENIOR_CITIZEN_FARE = 100
 KID_FARE = 50
 SERVICE_FEE = 2
+REDUCTION_VALUE = 0.5
 
 def calcServiceCharge (balance, fare) :
     serviceCharge = fare - balance
     serviceCharge = serviceCharge*SERVICE_FEE
     return int(serviceCharge/100)
 
+def reduceFare(fare) :
+    return int(fare * REDUCTION_VALUE)
+
 class metroCardPassengers :
-    def __init__(self, passengerID, passengerBalance):
+    def __init__(self, passengerID, passengerBalance, ReturnJourney = False , travelDestination = None):
         self.passengerID = passengerID
         self.passengerBalance =  passengerBalance
-        self.isReturnJourney = False
-        self.travelDestination = None
+        self.returnJourney = ReturnJourney
+        self.travelDestination = travelDestination
         
     def getPassengerID (self) :
         return self.passengerID
@@ -26,146 +30,99 @@ class metroCardPassengers :
         self.travelDestination = destination
 
 
-    def getIsReturnJourney(self) :
-        return self.isReturnJourney
-    def updateIsReturnJourney(self, updateReturnJourney) :
-        self.isReturnJourney = updateReturnJourney
+    def isReturnJourney(self) :
+        return self.returnJourney
+    def updateIsReturnJourney(self, updatedReturnJourney) :
+        self.returnJourney = updatedReturnJourney
 
 
     def getPassengerBalance (self) :
-        return self.passengerBalance
+        return int(self.passengerBalance)
     def updatePassengerBalance(self, updatedBalance) :
-        self.passengerBalance = updatedBalance
+        self.passengerBalance = int(updatedBalance)
 
+    #Passenger Has Enough balance to travel, hence deducting Fare
+    def deductPassengerBalance(self, fare, balance, collectionSummary) :
+        updatedBalance = balance - fare
+        self.updatePassengerBalance(updatedBalance)
+        collectionSummary.addToCollection(fare)
+        
+        
 
+    #Passenger does not have Enough balance to travel, hence deducting Fare and applying Service charges
+    def deductServiceChargeAndPassengerBalance(self, fare, balance, collectionSummary) :
+        serviceFeeCharge = calcServiceCharge(balance, fare)
+        updatedBalance = 0
+        self.updatePassengerBalance(updatedBalance)
+        collectionSummary.addToCollection(fare+serviceFeeCharge)
+        
+        
+
+    #checking if Passenger Having Enough balance to travel
+    def checkBalanceAndDeduct(self, fare , collectionSummary) :
+        if  self.getPassengerBalance() >= fare :
+            self.deductPassengerBalance(fare, self.getPassengerBalance(), collectionSummary)
+        else :
+            self.deductServiceChargeAndPassengerBalance(fare, self.getPassengerBalance(),collectionSummary)
+
+    #Passenger is Doing Return Journey, hence Reduced fare will be deducted
+    def deductForReturnJourney(self, passengerType, collectionSummary):
+        #checking PassengerType
+        if passengerType == 'ADULT' :
+            self.checkBalanceAndDeduct(reduceFare(ADULT_FARE), collectionSummary)
+            collectionSummary.updateAdultCount()
+            collectionSummary.addToDiscount(reduceFare(ADULT_FARE))
+                        
+        elif passengerType == 'SENIOR_CITIZEN' :
+            self.checkBalanceAndDeduct(reduceFare(SENIOR_CITIZEN_FARE), collectionSummary)
+            collectionSummary.updateSeniorCitizenCount()
+            collectionSummary.addToDiscount(reduceFare(SENIOR_CITIZEN_FARE))
+
+        elif passengerType == 'KID' :
+            self.checkBalanceAndDeduct(reduceFare(KID_FARE), collectionSummary)
+            collectionSummary.updateKidCount()
+            collectionSummary.addToDiscount(reduceFare(KID_FARE))
+
+        else :
+            print('No Such PassengerType')
+
+    #Passenger is Doing OneWay Journey, hence Actual fare will be deducted
+    def deductForOneWayJourney(self, passengerType, collectionSummary) :
+        #checking PassengerType
+        if passengerType == 'ADULT' :
+            self.checkBalanceAndDeduct(ADULT_FARE, collectionSummary)
+            collectionSummary.updateAdultCount()
+        elif passengerType == 'SENIOR_CITIZEN' :
+            self.checkBalanceAndDeduct(SENIOR_CITIZEN_FARE, collectionSummary)
+            collectionSummary.updateSeniorCitizenCount()
+        elif passengerType == 'KID' :
+            self.checkBalanceAndDeduct(KID_FARE, collectionSummary)
+            collectionSummary.updateKidCount()
+        else :
+            print('No Such PassengerType') 
+
+    
+    
     def deductTravelCharges(self, travellingDestination, passengerType, collectionSummary) :
         
-        if  self.getTravelDestination() != travellingDestination :
-            balance = int(self.getPassengerBalance())
-            returnJourneyCheck = self.getIsReturnJourney()
-            
+        if  self.getTravelDestination() != travellingDestination :            
             #if passenger doing OneWay Journey
-            if returnJourneyCheck == False :
-
-                ##checking passenger Type
-                if  passengerType == 'ADULT' :
-                    ## checking if passenger has required balance
-                    if  balance >= ADULT_FARE :
-                        updatedBalance = balance - ADULT_FARE
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(ADULT_FARE)
-                        self.updateIsReturnJourney(True)
-                        collectionSummary.updateAdultCount()
-                    ##if passenger not having required balance
-                    ##calculating service charges
-                    else :
-                        serviceFeeCharge = calcServiceCharge(balance, ADULT_FARE)
-                        updatedBalance = 0
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(ADULT_FARE+serviceFeeCharge)
-                        self.updateIsReturnJourney(True)
-                        collectionSummary.updateAdultCount()
-
-                elif passengerType == 'SENIOR_CITIZEN' :
-
-                    if  balance >= SENIOR_CITIZEN_FARE :
-                        updatedBalance = balance - SENIOR_CITIZEN_FARE
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(SENIOR_CITIZEN_FARE)
-                        self.updateIsReturnJourney(True)
-                        collectionSummary.updateSeniorCitizenCount()
-
-                    else :
-                        serviceFeeCharge = calcServiceCharge(balance, SENIOR_CITIZEN_FARE)
-                        updatedBalance = 0
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(SENIOR_CITIZEN_FARE+serviceFeeCharge)
-                        self.updateIsReturnJourney(True)
-                        collectionSummary.updateSeniorCitizenCount()
-
-                elif passengerType == 'KID' :
-
-                    if  balance >= KID_FARE :
-                        updatedBalance = balance - KID_FARE
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(KID_FARE)
-                        self.updateIsReturnJourney(True)
-                        collectionSummary.updateKidCount()
-
-                    else :
-                        serviceFeeCharge = calcServiceCharge(balance, KID_FARE)
-                        updatedBalance = 0
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(KID_FARE+serviceFeeCharge)
-                        self.updateIsReturnJourney(True)
-                        collectionSummary.updateKidCount()
-
+            if self.isReturnJourney() == False :
+                self.deductForOneWayJourney(passengerType, collectionSummary)
+                self.updateIsReturnJourney(True)
             #if passenger doing Return Journey        
             else :
-
-                ##checking passenger Type
-                if  passengerType == 'ADULT' :
-                    ## checking if passenger has required balance
-                    if  balance >= int(ADULT_FARE/2) :
-                        updatedBalance = balance - int(ADULT_FARE/2)
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(int(ADULT_FARE/2))
-                        collectionSummary.addToDiscount(int(ADULT_FARE/2))
-                        collectionSummary.updateAdultCount()
-                        self.updateIsReturnJourney(False)
-                    ##if passenger not having required balance
-                    ##calculating service charges
-                    else :
-                        serviceFeeCharge = calcServiceCharge(balance, int(ADULT_FARE/2))
-                        updatedBalance = 0
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(int(ADULT_FARE/2) + serviceFeeCharge)
-                        collectionSummary.addToDiscount(int(ADULT_FARE/2))
-                        collectionSummary.updateAdultCount()
-                        self.updateIsReturnJourney(False)
-
-                elif passengerType == 'SENIOR_CITIZEN' :
-
-                    if  balance >= int(SENIOR_CITIZEN_FARE/2) :
-                        updatedBalance = balance - int(SENIOR_CITIZEN_FARE/2)
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(int(SENIOR_CITIZEN_FARE/2))
-                        collectionSummary.addToDiscount(int(SENIOR_CITIZEN_FARE/2))
-                        collectionSummary.updateSeniorCitizenCount()
-                        self.updateIsReturnJourney(False)
-
-                    else :
-                        serviceFeeCharge = calcServiceCharge(balance, int(SENIOR_CITIZEN_FARE/2))
-                        updatedBalance = 0
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(int(SENIOR_CITIZEN_FARE/2) + serviceFeeCharge)
-                        collectionSummary.addToDiscount(int(SENIOR_CITIZEN_FARE/2))
-                        collectionSummary.updateSeniorCitizenCount()
-                        self.updateIsReturnJourney(False)
-
-                elif passengerType == 'KID' :
-
-                    if  balance >= int(KID_FARE/2) :
-                        updatedBalance = balance - int(KID_FARE/2)
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(int(KID_FARE/2))
-                        collectionSummary.addToDiscount(int(KID_FARE/2))
-                        collectionSummary.updateKidCount()
-                        self.updateIsReturnJourney(False)
-
-                    else :
-                        serviceFeeCharge = calcServiceCharge(balance, int(KID_FARE/2))
-                        updatedBalance = 0
-                        self.updatePassengerBalance(updatedBalance)
-                        collectionSummary.addToCollection(int(KID_FARE/2) + serviceFeeCharge)
-                        collectionSummary.addToDiscount(int(KID_FARE/2))
-                        collectionSummary.updateKidCount()
-                        self.updateIsReturnJourney(False)
-
+                self.deductForReturnJourney(passengerType, collectionSummary)
+                self.updateIsReturnJourney(False)
+            
+            #updating travel Destination to check for same Source and Destination
             self.updateTravelDestination(travellingDestination)
 
         else :
-            print ('travel Source and Destination are same')
+            print ('Travel Source and Destination are Same !!!')
+
+
+
 
     def printDetails (self):
         print ('------------------------------')
