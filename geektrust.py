@@ -1,3 +1,4 @@
+import sys
 from metroCardPassengers import metroCardPassengers
 from airportSummary import airportSummary
 from centralSummary import centralSummary
@@ -26,8 +27,8 @@ if __name__ == '__main__':
     airportCollectionSummary =  airportSummary ()
     centralCollectionSummary =  centralSummary ()
 
-    file = open('sampleIOfile2.txt', 'r+')
-    # file = open(sys.argv[1], 'r+')
+    #file = open('sampleIOfile2.txt', 'r+')
+    file = open(sys.argv[1], 'r+')
     
     for inputString in file.readlines():
         

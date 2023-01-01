@@ -23,6 +23,7 @@ class centralSummary :
         
     def centralSummaryPrint (self) :
         print('TOTAL_COLLECTION CENTRAL ' + str(self.collectionAmount) + ' ' + str(self.discount))
+        print('PASSENGER_TYPE_SUMMARY')
         if self.adultCount > 0 :
             print('ADULT ' + str(self.adultCount))
         if self.kidCount > 0 :

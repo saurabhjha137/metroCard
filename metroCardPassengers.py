@@ -5,13 +5,16 @@ KID_FARE = 50
 SERVICE_FEE = 2
 REDUCTION_VALUE = 0.5
 
+#serviceCharges calculation
 def calcServiceCharge (balance, fare) :
     serviceCharge = fare - balance
     serviceCharge = serviceCharge*SERVICE_FEE
     return int(serviceCharge/100)
 
+#Fare Reduction for Return Journey 
 def reduceFare(fare) :
     return int(fare * REDUCTION_VALUE)
+
 
 class metroCardPassengers :
     def __init__(self, passengerID, passengerBalance, ReturnJourney = False , travelDestination = None):
@@ -23,7 +26,7 @@ class metroCardPassengers :
     def getPassengerID (self) :
         return self.passengerID
     
-
+    # travelDestination info and Update 
     def getTravelDestination (self) :
         return self.travelDestination
     def updateTravelDestination(self, destination) :
